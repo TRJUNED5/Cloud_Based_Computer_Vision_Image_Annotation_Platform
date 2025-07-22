@@ -4,10 +4,15 @@ import ImageModel from "./model/image_model.js"
 import multer from "multer";
 import dotenv from "dotenv"
 import cors from "cors"
+import path from "path"
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json())
 app.use(cors())
+app.use(express.static("uploads"))
 
 dotenv.config()
 
@@ -34,11 +39,24 @@ app.post("/single", upload.single("image"),async (req,res)=>{
     }
 })
 
+app.get("/img/:id", async(req,res)=>{
+  const {id} = req.params
+  try {
+    const image = await ImageModel.findById(id)
+    if(!image) res.send({"msg":"Image Not Found"})
+
+    const imagePath = path.join(__dirname, "..","uploads", image.filename)
+    res.sendFile(imagePath)
+  } catch (error) {
+    
+  }
+})
+
 app.listen(5000, async() =>{
     try {
         await mongoose.connect(process.env.MONGO_URL)
         console.log("Database is connected")
-        console.log("App is running pon port 5000")
+        console.log("App is running on port 5000")
     } catch (error) {
         console.log("Error in connecting with database")
     }
