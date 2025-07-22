@@ -33,7 +33,7 @@ app.post("/single", upload.single("image"),async (req,res)=>{
         const { path, filename} = req.file
         const image = await ImageModel({path, filename})
         await image.save()
-        res.send({"msg":"Image uploaded"})
+        res.send({"msg":"Image uploaded", id: image._id})
     } catch (error) {
         res.send({"error":"Unable to upload Image"})
     }
