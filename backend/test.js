@@ -20,7 +20,7 @@ app.use(express.static("uploads"))
 dotenv.config()
 
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: "healthy-hearth-466701-a5-4a7532f265a0.json",
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 });
 
 const storage = multer.diskStorage({
@@ -37,10 +37,14 @@ const upload = multer({ storage })
 
 app.post("/single", upload.single("image"),async (req,res)=>{
     try {
-        const { path, filename} = req.file
-        const image = await ImageModel({path, filename})
+        const { path:localPath, filename} = req.file;
+
+        const [result] = await client.labelDetection(localPath);
+        const labels = result.labelAnnotations.map(label => label.description)
+
+        const image = new ImageModel({path:localPath, filename, labels})
         await image.save()
-        res.send({"msg":"Image uploaded", id: image._id})
+        res.send({"msg":"Image uploaded", id: image._id, labels})
     } catch (error) {
         res.send({"error":"Unable to upload Image"})
     }

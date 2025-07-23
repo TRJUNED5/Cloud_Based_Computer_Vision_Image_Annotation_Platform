@@ -37,12 +37,15 @@ const upload = multer({ storage })
 
 app.post("/single", upload.single("image"),async (req,res)=>{
     try {
-        const { path:localPath, filename} = req.file;
+        const { path, filename} = req.file;
 
-        const [result] = await client.labelDetection(localPath);
-        const labels = result.labelAnnotations.map(label => label.description)
+        const [result] = await client.labelDetection(path);
+        const labels = result.labelAnnotations.map(label => ({
+          description: label.description,
+          score: label.score
+        }));
 
-        const image = new ImageModel({path:localPath, filename, labels})
+        const image = new ImageModel({path, filename, labels})
         await image.save()
         res.send({"msg":"Image uploaded", id: image._id, labels})
     } catch (error) {
