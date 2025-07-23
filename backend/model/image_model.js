@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
 const imageSchema = mongoose.Schema({
-    path: {type:String, requied:true},
-    filename: {type: String, requied: true},
+    path: {type:String, required:true},
+    filename: {type: String, required: true},
+    labels: [String]
 })
 
 const ImageModel = mongoose.model("images", imageSchema)
