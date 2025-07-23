@@ -20,7 +20,7 @@ app.use(express.static("uploads"))
 dotenv.config()
 
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: "healthy-hearth-466701-a5-4a7532f265a0.json",
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 });
 
 const storage = multer.diskStorage({
