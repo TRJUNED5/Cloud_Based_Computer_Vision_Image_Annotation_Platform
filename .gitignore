@@ -1,3 +1,5 @@
 .env
-.healthy-hearth-466701-a5-97d766971578
-.node_modules
+
+/node_modules
+
+healthy-hearth-466701-a5-fa707e110b8c.json
